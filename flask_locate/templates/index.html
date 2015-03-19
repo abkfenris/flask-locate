@@ -32,6 +32,9 @@ angular.module('myApp',['ngCsvImport'])
 
             return result
         }
+        $scope.reJSON = function (objStr) {
+            return JSON.parse(objStr);
+        }
     }]);
 </script>
 {% endblock %}
@@ -61,11 +64,15 @@ angular.module('myApp',['ngCsvImport'])
                     <div><pre>{{ csv.content }}</pre></div>
                     {% endraw %}
                 </div>
-                <div ng-if"csv.result">
+                <div ng-if="csv.result">
                     <h2>JSON</h2>
-                    {% raw %}
-                    <div><pre>{{ csv.result }}</div>
-                    {% endraw %}
+                    <ul>
+                        {% raw %}
+                        <li ng-repeat="row in reJSON(csv.result) track by $index">
+                            {{ row }}
+                        </li>
+                        {% endraw %}
+                    </ul>
                 </div>
 
             </div>
