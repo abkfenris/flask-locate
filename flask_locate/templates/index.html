@@ -1,8 +1,37 @@
 {% extends "base.html" %}
 
+{% block body_attribs %} ng-app="myApp"{% endblock %}
+
 {% block scripts %}
 {{ super() }}
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.min.js"></script>
+<script src="{{ url_for('static', filename='lib/PapaParse/papaparse.min.js')}}"></script>
+<script src="{{ url_for('static', filename='lib/ng-papaparse/ng-papaparse.min.js')}}"></script>
+<script>
+var data = [];
+angular.module('myApp',['ngPapaParse'])
+    .run(['Papa','$rootScope',function(Papa,$rootScope){
+        $rootScope.options = {
+            config: {
+                step: function (results, handle) {
+                    console.log("Row:", results.data);
+                    data.push(results.data);
+                    //data = results.data;
+                },
+                complete: function(results) {
+                    console.log("Finished config:", results);
+                    console.log("data var:", data);
+                }
+            },
+            //complete: function(results) {
+            //    console.log("Finished:", results);
+            //}
+            //before:function(file,element){
+            //    console.log(file,element);
+            //}
+        }
+    }]);
+</script>
 {% endblock %}
 
 {% block content %}
@@ -17,7 +46,8 @@
             <div class="col-xs-12">
                 <h2>Step 1: Name and information</h2>
                 First lets upload a file:
-                <input type="file" id="file">
+                <input type="file" id="csv-file" papa-parse="options" multiple>
+                <button id="submit-parse">Parse CSV</button>
             </div>
         </div>
     </div>

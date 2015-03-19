@@ -1,3 +1,6 @@
 [submodule "flask_locate/static/lib/PapaParse"]
 	path = flask_locate/static/lib/PapaParse
 	url = https://github.com/mholt/PapaParse.git
+[submodule "flask_locate/static/lib/ng-papaparse"]
+	path = flask_locate/static/lib/ng-papaparse
+	url = https://github.com/adaojunior/ng-papaparse.git
