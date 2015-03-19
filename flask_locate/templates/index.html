@@ -11,16 +11,21 @@
 var data = [];
 angular.module('myApp',['ngPapaParse'])
     .run(['Papa','$rootScope',function(Papa,$rootScope){
+        $rootScope.data = []
         $rootScope.options = {
             config: {
                 step: function (results, handle) {
-                    console.log("Row:", results.data);
-                    data.push(results.data);
+                    //console.log("Row:", results.data);
+                    //Adding row to data variable
+                    $rootScope.data.push(results.data[0]);
                     //data = results.data;
                 },
                 complete: function(results) {
-                    console.log("Finished config:", results);
-                    console.log("data var:", data);
+                    //console.log("Finished config:", results);
+                    //remove weird last row from data variable
+                    $rootScope.data.pop();
+                    //show data variable
+                    console.log("data var:", $rootScope.data);
                 }
             },
             //complete: function(results) {
@@ -30,6 +35,8 @@ angular.module('myApp',['ngPapaParse'])
             //    console.log(file,element);
             //}
         }
+    }])
+    .controller('CSVController', ['$rootScope', function($rootScope) {
     }]);
 </script>
 {% endblock %}
@@ -41,13 +48,23 @@ angular.module('myApp',['ngPapaParse'])
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" ng-controller="CSVController">
         <div class="row">
             <div class="col-xs-12">
                 <h2>Step 1: Name and information</h2>
                 First lets upload a file:
                 <input type="file" id="csv-file" papa-parse="options" multiple>
-                <button id="submit-parse">Parse CSV</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <ul>
+                    {% raw %}
+                    <li ng-repeat="row in data">
+                        A row
+                    </li>
+                    {% endraw %}
+                </ul>
             </div>
         </div>
     </div>
