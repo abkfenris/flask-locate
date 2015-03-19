@@ -4,3 +4,6 @@
 [submodule "flask_locate/static/lib/ng-papaparse"]
 	path = flask_locate/static/lib/ng-papaparse
 	url = https://github.com/adaojunior/ng-papaparse.git
+[submodule "flask_locate/static/lib/angular-csv-import"]
+	path = flask_locate/static/lib/angular-csv-import
+	url = https://github.com/bahaaldine/angular-csv-import.git

@@ -5,38 +5,33 @@
 {% block scripts %}
 {{ super() }}
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.min.js"></script>
-<script src="{{ url_for('static', filename='lib/PapaParse/papaparse.min.js')}}"></script>
-<script src="{{ url_for('static', filename='lib/ng-papaparse/ng-papaparse.min.js')}}"></script>
+<script src="{{ url_for('static', filename='lib/angular-csv-import/dist/angular-csv-import.js')}}"></script>
 <script>
 var data = [];
-angular.module('myApp',['ngPapaParse'])
-    .run(['Papa','$rootScope',function(Papa,$rootScope){
-        $rootScope.data = []
-        $rootScope.options = {
-            config: {
-                step: function (results, handle) {
-                    //console.log("Row:", results.data);
-                    //Adding row to data variable
-                    $rootScope.data.push(results.data[0]);
-                    //data = results.data;
-                },
-                complete: function(results) {
-                    //console.log("Finished config:", results);
-                    //remove weird last row from data variable
-                    $rootScope.data.pop();
-                    //show data variable
-                    console.log("data var:", $rootScope.data);
-                }
-            },
-            //complete: function(results) {
-            //    console.log("Finished:", results);
-            //}
-            //before:function(file,element){
-            //    console.log(file,element);
-            //}
+angular.module('myApp',['ngCsvImport'])
+    .controller('CSVController', ['$scope', '$parse', function ($scope, $parse) {
+        $scope.csv = {
+            content: null,
+            header: false,
+            seperator: ',',
+            result: null
+        };
+
+        var _lastGoodResult = '';
+        $scope.toPrettyJSON = function (objStr, tabWidth) {
+            var obj = null;
+            try {
+                obj = $parse(objStr)({});
+            } catch(e) {
+                // eat $parse error
+                return _lastGoodResult;
+            }
+
+            var result = JSON.stringify(obj, null, Number(tabWidth));
+            _lastGoodResult = result;
+
+            return result
         }
-    }])
-    .controller('CSVController', ['$rootScope', function($rootScope) {
     }]);
 </script>
 {% endblock %}
@@ -51,9 +46,28 @@ angular.module('myApp',['ngPapaParse'])
     <div class="container" ng-controller="CSVController">
         <div class="row">
             <div class="col-xs-12">
-                <h2>Step 1: Name and information</h2>
-                First lets upload a file:
-                <input type="file" id="csv-file" papa-parse="options" multiple>
+                <div>
+                    <h2>Step 1: Name and information</h2>
+                    First lets upload a file:
+                    <ng-csv-import
+		              class="import"
+		              content="csv.content"
+		              header="csv.header"
+		              separator="csv.separator"
+		              result="csv.result"></ng-csv-import>
+                <div ng-if="csv.content">
+                    <h2>CSV</h2>
+                    {% raw %}
+                    <div><pre>{{ csv.content }}</pre></div>
+                    {% endraw %}
+                </div>
+                <div ng-if"csv.result">
+                    <h2>JSON</h2>
+                    {% raw %}
+                    <div><pre>{{ csv.result }}</div>
+                    {% endraw %}
+                </div>
+
             </div>
         </div>
         <div class="row">
