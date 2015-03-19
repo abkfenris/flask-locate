@@ -10,10 +10,11 @@
 var data = [];
 angular.module('myApp',['ngCsvImport'])
     .controller('CSVController', ['$scope', '$parse', function ($scope, $parse) {
+        window.MY_SCOPE = $scope;
         $scope.csv = {
             content: null,
             header: false,
-            seperator: ',',
+            seperator: "','",
             result: null
         };
 
@@ -32,8 +33,17 @@ angular.module('myApp',['ngCsvImport'])
 
             return result
         }
+        var _lastrejson = []
         $scope.reJSON = function (objStr) {
-            return JSON.parse(objStr);
+            //console.log("String:", objStr);
+            //var out = null;
+            try {
+                _lastrejson = $parse(objStr)({});
+            } catch(e) {
+                return _lastrejson;
+            }
+            //console.log(out);
+            return _lastrejson;
         }
     }]);
 </script>
@@ -55,8 +65,8 @@ angular.module('myApp',['ngCsvImport'])
                     <ng-csv-import
 		              class="import"
 		              content="csv.content"
-		              header="csv.header"
-		              separator="csv.separator"
+		              header="false"
+		              separator="','"
 		              result="csv.result"></ng-csv-import>
                 <div ng-if="csv.content">
                     <h2>CSV</h2>
@@ -66,26 +76,23 @@ angular.module('myApp',['ngCsvImport'])
                 </div>
                 <div ng-if="csv.result">
                     <h2>JSON</h2>
-                    <ul>
-                        {% raw %}
-                        <li ng-repeat="row in reJSON(csv.result) track by $index">
-                            {{ row }}
-                        </li>
-                        {% endraw %}
-                    </ul>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                {% raw %}
+                                    <th ng-repeat="(key, value) in reJSON(csv.result)[0]">Header</th>
+                                {% endraw %}
+                            </tr>
+                        <tbody>
+                            {% raw %}
+                            <tr ng-repeat="row in reJSON(csv.result) track by $index">
+                                <td ng-repeat="(key, value) in row">{{ value }}</td>
+                            </tr>
+                            {% endraw %}
+                        </tbody>
+                    </table>
                 </div>
 
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <ul>
-                    {% raw %}
-                    <li ng-repeat="row in data">
-                        A row
-                    </li>
-                    {% endraw %}
-                </ul>
             </div>
         </div>
     </div>
