@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Make a Map</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>Step 1: Name and information</h2>
+                First lets upload a file:
+                <input type="file" id="file">
+            </div>
+        </div>
+    </div>
+{% endblock %}
